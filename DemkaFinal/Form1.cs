@@ -1,15 +1,14 @@
 using Npgsql;
 using System.Data;
-using System.Runtime.InteropServices;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DemkaFinal
 {
     public partial class Form1 : Form
     {
-        int endpage = 0;
+        int endpage = 1;
         int currentMinPage = 0;
         int currentPage = 1;
+        string sqlCommand = "SELECT * FROM product ORDER BY id ASC";
         public static DataSet ds;
         public static DataTable dt;
         public static NpgsqlConnection connString = new NpgsqlConnection("Host=localhost;Port=5432;Database=demka;Username=postgres;Password=1234");
@@ -17,14 +16,15 @@ namespace DemkaFinal
         public Form1()
         {
             InitializeComponent();
-            setEndPage();
-            productToUser();
+            productToUser(sqlCommand);
             pageToUser(currentMinPage);
+            comboBoxFiltr.Items.AddRange(new string[] { "Тип1", "Тип2" });
+            comboBoxSort.Items.AddRange(new string[] { "ASC", "DESC" });
         }
 
-        public void setEndPage()
+        public void setEndPage(string str)
         {
-            SQLtoDB("SELECT * FROM product ORDER BY id ASC");
+            SQLtoDB(str);
             if (dt.Rows.Count % 20 != 0)
             {
                 endpage = dt.Rows.Count / 20 + 1;
@@ -35,11 +35,23 @@ namespace DemkaFinal
             }
         }
 
-        public void productToUser()
+        public void productToUser(string str)
         {
             flowLayoutPanelProducts.Controls.Clear();
-            SQLtoDB("SELECT * FROM product ORDER BY id ASC");
-            for (int i = 0 + (20 * (currentPage - 1)); i < 20 + (20 * (currentPage - 1)); i++)
+            int iEnd = 20;
+            setEndPage(str);
+            if (currentPage == endpage)
+            {
+                if (dt.Rows.Count % 20 != 0)
+                {
+                    iEnd = dt.Rows.Count % 20;
+                }
+            }
+            if (currentPage > endpage)
+            {
+                iEnd = 0;
+            }
+            for (int i = 0 + (20 * (currentPage - 1)); i < iEnd + (20 * (currentPage - 1)); i++)
             {
                 Product product = new Product();
                 product.Size = new Size(615, 111);
@@ -47,7 +59,7 @@ namespace DemkaFinal
                 product.labelProductName.Text = dt.Rows[i][1].ToString();
                 product.labelProductArtc.Text = dt.Rows[i][3].ToString();
                 product.labelProductCost.Text = dt.Rows[i][5].ToString();
-                if (dt.Rows[i][4].ToString() != "нет" && dt.Rows[i][4].ToString() != "не указано" && dt.Rows[i][4].ToString() != "отсутствует" && dt.Rows[i][4].ToString() != "")
+                if (dt.Rows[i][4].ToString().StartsWith("\\"))
                 {
                     product.pictureOfProduct.ImageLocation = $"C:\\Users\\USER_2.1\\Desktop\\Promezhutochny_kontrol\\Промежуточный контроль\\Сессия 1{dt.Rows[i][4].ToString()}";
                 }
@@ -88,25 +100,86 @@ namespace DemkaFinal
             Label label = (Label)sender;
             if (label.Text == "<")
             {
-                if (currentMinPage != 0) 
+                if (currentMinPage != 0)
                 {
                     currentMinPage--;
                     pageToUser(currentMinPage);
                 }
             }
-            else if (label.Text == ">") 
+            else if (label.Text == ">")
             {
-                if (currentMinPage + 4 != endpage)
+                if (currentMinPage + 4 < endpage)
                 {
                     currentMinPage++;
                     pageToUser(currentMinPage);
-                }    
+                }
             }
             else
             {
                 currentPage = Convert.ToInt32(label.Text);
-                productToUser();
+                productToUser(sqlCommand);
             }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            Search();
+        }
+
+        public void Search()
+        {
+            string main = "SELECT * FROM product";
+            bool where = false;
+            string searchLetters = "";
+            string sortType = "";
+            string result = "";
+
+            if (textBox1.Text != "")
+            {
+                sqlCommand = $"SELECT EXISTS ({main} WHERE title ILIKE '%{textBox1.Text}%');";
+                SQLtoDB(sqlCommand);
+                if (dt.Rows[0][0].ToString() == "True")
+                {
+                    searchLetters = $" title ILIKE '%{textBox1.Text}%'";
+                    where = true;
+                }
+            }
+
+            switch (comboBoxSort.SelectedIndex)
+            {
+                case -1:
+                    sortType = " ORDER BY ID ASC";
+                    break;
+                case 0:
+                    sortType = " ORDER BY ID ASC";
+                    break;
+                case 1:
+                    sortType = " ORDER BY ID DESC";
+                    break;
+            }
+
+
+            if (where)
+            {
+                result = $"{main} WHERE {searchLetters} {sortType}";
+            }
+            else
+            {
+                result = $"{main} {sortType}";
+            }
+            
+            sqlCommand = result;
+            productToUser(sqlCommand);
+        }
+
+        private void comboBoxSort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Search();
+        }
+
+        private void comboBoxFiltr_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Search();
         }
 
         public static void SQLtoDB(string sql)
