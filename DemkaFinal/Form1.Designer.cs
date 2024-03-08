@@ -29,7 +29,8 @@
         private void InitializeComponent()
         {
             npgsqlCommandBuilder1 = new Npgsql.NpgsqlCommandBuilder();
-            flowLayoutPanel1 = new FlowLayoutPanel();
+            flowLayoutPanelProducts = new FlowLayoutPanel();
+            flowLayoutPanel2 = new FlowLayoutPanel();
             SuspendLayout();
             // 
             // npgsqlCommandBuilder1
@@ -37,20 +38,29 @@
             npgsqlCommandBuilder1.QuotePrefix = "\"";
             npgsqlCommandBuilder1.QuoteSuffix = "\"";
             // 
-            // flowLayoutPanel1
+            // flowLayoutPanelProducts
             // 
-            flowLayoutPanel1.AutoScroll = true;
-            flowLayoutPanel1.Location = new Point(0, 52);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(628, 488);
-            flowLayoutPanel1.TabIndex = 0;
+            flowLayoutPanelProducts.AutoScroll = true;
+            flowLayoutPanelProducts.Location = new Point(0, 52);
+            flowLayoutPanelProducts.Name = "flowLayoutPanelProducts";
+            flowLayoutPanelProducts.Size = new Size(639, 488);
+            flowLayoutPanelProducts.TabIndex = 0;
+            // 
+            // flowLayoutPanel2
+            // 
+            flowLayoutPanel2.AutoScroll = true;
+            flowLayoutPanel2.Location = new Point(509, 546);
+            flowLayoutPanel2.Name = "flowLayoutPanel2";
+            flowLayoutPanel2.Size = new Size(130, 46);
+            flowLayoutPanel2.TabIndex = 0;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(629, 539);
-            Controls.Add(flowLayoutPanel1);
+            ClientSize = new Size(641, 596);
+            Controls.Add(flowLayoutPanel2);
+            Controls.Add(flowLayoutPanelProducts);
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
@@ -58,6 +68,7 @@
 
         #endregion
         private Npgsql.NpgsqlCommandBuilder npgsqlCommandBuilder1;
-        private FlowLayoutPanel flowLayoutPanel1;
+        private FlowLayoutPanel flowLayoutPanelProducts;
+        private FlowLayoutPanel flowLayoutPanel2;
     }
 }

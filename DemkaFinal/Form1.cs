@@ -1,10 +1,15 @@
 using Npgsql;
 using System.Data;
+using System.Runtime.InteropServices;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DemkaFinal
 {
     public partial class Form1 : Form
     {
+        int endpage = 0;
+        int currentMinPage = 0;
+        int currentPage = 1;
         public static DataSet ds;
         public static DataTable dt;
         public static NpgsqlConnection connString = new NpgsqlConnection("Host=localhost;Port=5432;Database=demka;Username=postgres;Password=1234");
@@ -12,18 +17,29 @@ namespace DemkaFinal
         public Form1()
         {
             InitializeComponent();
+            setEndPage();
             productToUser();
+            pageToUser(currentMinPage);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        public void setEndPage()
         {
-            //SQLtoDBwithChanges($"INSERT INTO users (login, password) VALUES ('{textBox1.Text}', '{textBox2.Text}');");
+            SQLtoDB("SELECT * FROM product ORDER BY id ASC");
+            if (dt.Rows.Count % 20 != 0)
+            {
+                endpage = dt.Rows.Count / 20 + 1;
+            }
+            else
+            {
+                endpage = dt.Rows.Count / 20;
+            }
         }
 
         public void productToUser()
         {
+            flowLayoutPanelProducts.Controls.Clear();
             SQLtoDB("SELECT * FROM product ORDER BY id ASC");
-            for (int i = 0; i < 20; i++)
+            for (int i = 0 + (20 * (currentPage - 1)); i < 20 + (20 * (currentPage - 1)); i++)
             {
                 Product product = new Product();
                 product.Size = new Size(615, 111);
@@ -35,7 +51,61 @@ namespace DemkaFinal
                 {
                     product.pictureOfProduct.ImageLocation = $"C:\\Users\\USER_2.1\\Desktop\\Promezhutochny_kontrol\\Промежуточный контроль\\Сессия 1{dt.Rows[i][4].ToString()}";
                 }
-                flowLayoutPanel1.Controls.Add(product);
+                else
+                {
+                    product.pictureOfProduct.ImageLocation = $"C:\\Users\\USER_2.1\\Desktop\\Promezhutochny_kontrol\\Промежуточный контроль\\Сессия 1\\picture.png";
+                }
+                product.pictureOfProduct.SizeMode = PictureBoxSizeMode.StretchImage;
+                flowLayoutPanelProducts.Controls.Add(product);
+            }
+        }
+
+        public void pageToUser(int minPage)
+        {
+            flowLayoutPanel2.Controls.Clear();
+            Label label = new Label();
+            label.Size = new Size(15, 15);
+            label.Text = "<";
+            label.Click += labelChangePage_Click;
+            flowLayoutPanel2.Controls.Add(label);
+            for (int i = 0 + minPage; i < 4 + minPage; i++)
+            {
+                label = new Label();
+                label.Size = new Size(15, 15);
+                label.Text = $"{i + 1}";
+                label.Click += labelChangePage_Click;
+                flowLayoutPanel2.Controls.Add(label);
+            }
+            label = new Label();
+            label.Size = new Size(15, 15);
+            label.Text = ">";
+            label.Click += labelChangePage_Click;
+            flowLayoutPanel2.Controls.Add(label);
+        }
+
+        private void labelChangePage_Click(object sender, EventArgs e)
+        {
+            Label label = (Label)sender;
+            if (label.Text == "<")
+            {
+                if (currentMinPage != 0) 
+                {
+                    currentMinPage--;
+                    pageToUser(currentMinPage);
+                }
+            }
+            else if (label.Text == ">") 
+            {
+                if (currentMinPage + 4 != endpage)
+                {
+                    currentMinPage++;
+                    pageToUser(currentMinPage);
+                }    
+            }
+            else
+            {
+                currentPage = Convert.ToInt32(label.Text);
+                productToUser();
             }
         }
 
