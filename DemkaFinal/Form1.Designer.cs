@@ -30,13 +30,13 @@
         {
             npgsqlCommandBuilder1 = new Npgsql.NpgsqlCommandBuilder();
             flowLayoutPanelProducts = new FlowLayoutPanel();
-            flowLayoutPanel2 = new FlowLayoutPanel();
             textBox1 = new TextBox();
             label1 = new Label();
             comboBoxSort = new ComboBox();
             comboBoxFiltr = new ComboBox();
             label2 = new Label();
             label3 = new Label();
+            flowLayoutPanel2 = new FlowLayoutPanel();
             SuspendLayout();
             // 
             // npgsqlCommandBuilder1
@@ -51,14 +51,6 @@
             flowLayoutPanelProducts.Name = "flowLayoutPanelProducts";
             flowLayoutPanelProducts.Size = new Size(639, 488);
             flowLayoutPanelProducts.TabIndex = 0;
-            // 
-            // flowLayoutPanel2
-            // 
-            flowLayoutPanel2.AutoScroll = true;
-            flowLayoutPanel2.Location = new Point(509, 546);
-            flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(130, 46);
-            flowLayoutPanel2.TabIndex = 0;
             // 
             // textBox1
             // 
@@ -114,6 +106,14 @@
             label3.TabIndex = 6;
             label3.Text = "Сортировка";
             // 
+            // flowLayoutPanel2
+            // 
+            flowLayoutPanel2.AutoScroll = true;
+            flowLayoutPanel2.Location = new Point(509, 546);
+            flowLayoutPanel2.Name = "flowLayoutPanel2";
+            flowLayoutPanel2.Size = new Size(130, 46);
+            flowLayoutPanel2.TabIndex = 0;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -136,12 +136,12 @@
         #endregion
         private Npgsql.NpgsqlCommandBuilder npgsqlCommandBuilder1;
         private FlowLayoutPanel flowLayoutPanelProducts;
-        private FlowLayoutPanel flowLayoutPanel2;
         private TextBox textBox1;
         private Label label1;
         private ComboBox comboBoxSort;
         private ComboBox comboBoxFiltr;
         private Label label2;
         private Label label3;
+        private FlowLayoutPanel flowLayoutPanel2;
     }
 }

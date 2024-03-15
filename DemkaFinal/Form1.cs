@@ -130,25 +130,51 @@ namespace DemkaFinal
         {
             string main = "SELECT * FROM product";
             bool where = false;
+            bool and = false;
             string searchLetters = "";
+            string filtrType = "";
             string sortType = "";
             string result = "";
 
-            if (textBox1.Text != "")
+            if (textBox1.Text.Trim(' ') != "")
             {
-                sqlCommand = $"SELECT EXISTS ({main} WHERE title ILIKE '%{textBox1.Text}%');";
-                SQLtoDB(sqlCommand);
-                if (dt.Rows[0][0].ToString() == "True")
-                {
-                    searchLetters = $" title ILIKE '%{textBox1.Text}%'";
-                    where = true;
-                }
+                searchLetters = $" title ILIKE '%{textBox1.Text}%'";
+                where = true;
+            }
+
+            switch (comboBoxFiltr.SelectedIndex)
+            {
+                case -1:
+                    filtrType = "";
+                    break;
+                case 0:
+                    filtrType = " producttypeid = 1";
+                    if (where)
+                    {
+                        and = true;
+                    }
+                    else
+                    {
+                        where = true;
+                    }
+                    break;
+                case 1:
+                    filtrType = " producttypeid = 2";
+                    if (where)
+                    {
+                        and = true;
+                    }
+                    else
+                    {
+                        where = true;
+                    }
+                    break;
             }
 
             switch (comboBoxSort.SelectedIndex)
             {
                 case -1:
-                    sortType = " ORDER BY ID ASC";
+                    sortType = "";
                     break;
                 case 0:
                     sortType = " ORDER BY ID ASC";
@@ -158,10 +184,20 @@ namespace DemkaFinal
                     break;
             }
 
-
-            if (where)
+            if (where && and)
             {
-                result = $"{main} WHERE {searchLetters} {sortType}";
+                result = $"{main} WHERE {searchLetters} AND {filtrType} {sortType}";
+            }
+            else if(where)
+            {
+                if (searchLetters != "")
+                {
+                    result = $"{main} WHERE {searchLetters} {sortType}";
+                }
+                if (filtrType != "")
+                {
+                    result = $"{main} WHERE {filtrType} {sortType}";
+                }
             }
             else
             {
